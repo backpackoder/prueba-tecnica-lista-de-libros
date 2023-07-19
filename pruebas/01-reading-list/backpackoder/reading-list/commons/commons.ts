@@ -4,8 +4,8 @@ export const TITLE = "Libro magico";
 
 export const ROUTES = {
   HOME: "/",
-  FAVS: "/favs",
-  BOOK: (title: string) => `/book/${title}`,
+  FAVS: "/favorites",
+  BOOK: (author: string, title: string) => `/book/${author}/${title}`,
 };
 
 export { BOOKS_JSON };

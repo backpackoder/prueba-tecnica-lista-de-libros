@@ -1,5 +1,6 @@
 // Components
-import { BookItem } from "@/components/BookItem";
+import { BooksListContainer } from "../BooksListContainer";
+import { BookItem } from "@/components/books/BookItem";
 
 // Commons
 import { BOOKS_JSON } from "@/commons/commons";
@@ -19,11 +20,11 @@ export function SimilarBooks({ data }: SimilarBooksProps) {
       <section className="flex flex-col items-center justify-center gap-4 bg-gray-200 p-4">
         <h2 className="text-2xl">También podría gustarte:</h2>
 
-        <ul className="flex flex-wrap gap-8">
+        <BooksListContainer>
           {silimarBooks.map((book) => {
             return <BookItem key={book.book.title} book={book.book} />;
           })}
-        </ul>
+        </BooksListContainer>
       </section>
     )
   );

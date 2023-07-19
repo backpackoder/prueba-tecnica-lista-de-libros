@@ -1,12 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useReducer, useState } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
 
 // Contexts
 import { FiltersContext } from "./FiltersContext";
 
 // Reducer
 import { reducer } from "./reducer";
+
+// Commons
+import { BOOKS_JSON } from "@/commons/commons";
 
 // Utils
 import { handleFavList } from "@/utils/handleFavsList";
@@ -33,16 +36,29 @@ type ProviderProps = {
 
 export function FiltersProvider({ children }: ProviderProps) {
   const [filtersState, filtersDispatch] = useReducer(reducer, initialFiltersState);
+
   const [favList, setFavList] = useState(
     typeof window === "undefined" ? "" : window.localStorage.getItem("favs")
   );
 
   const getIsBookInFavs = useCallback(
     ({ book, fav }: { book: string; fav: boolean }) => {
-      return fav ? favList?.includes(book) : !favList?.includes(book);
+      if (favList) {
+        return fav ? favList?.includes(book) : !favList?.includes(book);
+      }
+      return false;
     },
+
     [favList]
   );
+
+  const favoritedDataBooks = useMemo(() => {
+    return BOOKS_JSON.library.filter((book) => {
+      const data = book.book;
+
+      return getIsBookInFavs({ book: data.ISBN, fav: true });
+    });
+  }, [getIsBookInFavs]);
 
   const handleFav = useCallback(
     (book: string) => {
@@ -55,9 +71,16 @@ export function FiltersProvider({ children }: ProviderProps) {
     [favList, getIsBookInFavs]
   );
 
+  window.addEventListener("storage", (event) => {
+    if (event.key === "favs") {
+      const updatedData: string | null = event.newValue ? JSON.parse(event.newValue) : null;
+      setFavList(updatedData);
+    }
+  });
+
   useEffect(() => {
     setFavList(window.localStorage.getItem("favs"));
-  }, [filtersState, setFavList]);
+  }, [favList, filtersState, setFavList]);
 
   return (
     <FiltersContext.Provider
@@ -66,7 +89,9 @@ export function FiltersProvider({ children }: ProviderProps) {
         filtersDispatch,
         favList,
         setFavList,
+        // parsedFavList,
         getIsBookInFavs,
+        favoritedDataBooks,
         handleFav,
       }}
     >

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useContext } from "react";
 
 // Contexts
@@ -10,19 +11,20 @@ import { FiltersContext } from "@/context/FiltersContext";
 import { StarIcon } from "@/components/StarIcon";
 
 // Commons
-import { BOOKS_JSON } from "@/commons/commons";
+import { BOOKS_JSON, ROUTES } from "@/commons/commons";
 
 type BookPresentationProps = {
+  author: string;
   book: (typeof BOOKS_JSON.library)[number]["book"];
 };
 
-export function BookPresentation({ book }: BookPresentationProps) {
+export function BookPresentation({ author, book }: BookPresentationProps) {
   const { getIsBookInFavs } = useContext(FiltersContext);
 
   const isBookInFavs = getIsBookInFavs({ book: book.ISBN, fav: true });
 
   return (
-    <section className="relative flex gap-4 bg-gray-300 py-4 px-8">
+    <section className="relative flex flex-wrap items-center gap-4 bg-gray-300 py-4 px-8 rounded-lg">
       <StarIcon book={book.ISBN} fav={isBookInFavs} />
 
       <Image src={book.cover} alt={book.title} width={200} height={0} />
@@ -47,7 +49,18 @@ export function BookPresentation({ book }: BookPresentationProps) {
         {book.author.otherBooks.length > 0 && (
           <>
             <p>Otras obras del autor:</p>
-            <p className="flex flex-wrap">{book.author.otherBooks.join(", ")}</p>
+            <ol className="flex flex-wrap gap-4">
+              {book.author.otherBooks.map((book) => (
+                <li key={book}>
+                  <Link
+                    href={ROUTES.BOOK(author, book)}
+                    className="bg-gray-200 p-2 rounded-lg duration-200 hover:bg-green-200"
+                  >
+                    {book}
+                  </Link>
+                </li>
+              ))}
+            </ol>
           </>
         )}
       </div>

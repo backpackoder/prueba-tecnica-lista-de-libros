@@ -8,7 +8,7 @@ import { FiltersContext } from "@/context/FiltersContext";
 // Components
 import { Filterbar } from "../navbars/filterbar/Filterbar";
 import { BooksListContainer } from "./BooksListContainer";
-import { BookItem } from "../BookItem";
+import { BookItem } from "../books/BookItem";
 
 // Assets
 import BOOKS_JSON from "../../assets/json/books.json";

@@ -26,7 +26,7 @@ export function StarIcon({ book, fav }: StarIconProps) {
     <FaStar
       size={25}
       color={fav ? "yellow" : "gray"}
-      className="absolute top-1 right-1 w-8 h-8 z-10"
+      className="absolute top-1 right-1 w-8 h-8 cursor-pointer z-10"
       onClick={() => handleFav()}
     />
   );
