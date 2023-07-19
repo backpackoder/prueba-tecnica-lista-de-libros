@@ -71,12 +71,13 @@ export function FiltersProvider({ children }: ProviderProps) {
     [favList, getIsBookInFavs]
   );
 
-  window.addEventListener("storage", (event) => {
-    if (event.key === "favs") {
-      const updatedData: string | null = event.newValue ? JSON.parse(event.newValue) : null;
-      setFavList(updatedData);
-    }
-  });
+  typeof window !== "undefined" &&
+    window.addEventListener("storage", (event) => {
+      if (event.key === "favs") {
+        const updatedData: string | null = event.newValue ? JSON.parse(event.newValue) : null;
+        setFavList(updatedData);
+      }
+    });
 
   useEffect(() => {
     setFavList(window.localStorage.getItem("favs"));
