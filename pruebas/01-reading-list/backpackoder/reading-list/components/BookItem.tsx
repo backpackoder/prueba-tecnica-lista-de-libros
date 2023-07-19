@@ -2,36 +2,28 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useContext } from "react";
 import { FaInfo, FaStar } from "react-icons/fa";
 
-// Utils
-import { storage_favs } from "@/utils/localStorageData";
-import { handleFavList } from "@/utils/handleFavsList";
+// Commons
 import { BOOKS_JSON, ROUTES } from "@/commons/commons";
 
-type BookProps = {
+// Types
+import { FiltersContext } from "@/context/FiltersContext";
+import { StarIcon } from "./StarIcon";
+
+type BookItemProps = {
   book: (typeof BOOKS_JSON.library)[number]["book"];
 };
 
-export function BookItem({ book }: BookProps) {
-  const [isFavorited, setIsFavorited] = useState(storage_favs?.includes(book.ISBN) ?? false);
+export function BookItem({ book }: BookItemProps) {
+  const { getIsBookInFavs, handleFav } = useContext(FiltersContext);
 
-  function handleFav() {
-    setIsFavorited((prev) => !prev);
-    handleFavList([book.ISBN]);
-  }
+  const isBookInFavs = getIsBookInFavs({ book: book.ISBN, fav: true });
 
   return (
     <li className="group relative flex flex-col items-start justify-start duration-200 cursor-pointer hover:scale-110">
-      {isFavorited && (
-        <FaStar
-          size={25}
-          color="yellow"
-          className="absolute top-1 right-1 w-8 h-8 z-10"
-          onClick={() => handleFav()}
-        />
-      )}
+      {isBookInFavs && <StarIcon book={book.ISBN} fav={isBookInFavs} />}
 
       <div
         className="absolute top-0 left-0 hidden flex-col items-center justify-center gap-2 w-full h-full text-white p-2 z-10
@@ -46,11 +38,11 @@ export function BookItem({ book }: BookProps) {
 
         <button
           className={`flex flew-wrap items-center justify-center gap-2 w-full ${
-            isFavorited ? "bg-red-500" : "bg-yellow-500"
+            isBookInFavs ? "bg-red-500" : "bg-yellow-500"
           } text-xs p-2 rounded-lg`}
-          onClick={() => handleFav()}
+          onClick={() => handleFav(book.ISBN)}
         >
-          {isFavorited ? "Eliminar de mi lista" : "Agregar a mi lista"}{" "}
+          {isBookInFavs ? "Eliminar de mi lista" : "Agregar a mi lista"}
           <FaStar size={25} color="yellow" />
         </button>
       </div>

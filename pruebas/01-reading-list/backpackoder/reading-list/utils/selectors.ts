@@ -12,6 +12,12 @@ const uniqueAuthors = authors.filter((author, index) => {
 });
 
 export const SELECTORS = {
+  SHOW: {
+    type: "show",
+    title: "Filtrar por",
+    default: "Todos",
+    options: ["Todos", "En mi lista", "No en mi lista"],
+  },
   GENRES: {
     type: "genre",
     title: "Genero",

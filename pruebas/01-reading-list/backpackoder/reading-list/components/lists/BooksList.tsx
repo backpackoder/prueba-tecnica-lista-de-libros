@@ -1,75 +1,50 @@
 "use client";
 
-import { useMemo, useReducer } from "react";
+import { useContext, useMemo } from "react";
+
+// Contexts
+import { FiltersContext } from "@/context/FiltersContext";
 
 // Components
-import { Filterbar } from "../navbars/Filterbar";
+import { Filterbar } from "../navbars/filterbar/Filterbar";
+import { BooksListContainer } from "./BooksListContainer";
 import { BookItem } from "../BookItem";
 
 // Assets
 import BOOKS_JSON from "../../assets/json/books.json";
 
-const filtersState = {
-  genre: null as string | null,
-  author: null as string | null,
-  order: "asc" as "asc" | "desc",
-  sort: "" as "" | "title" | "author" | "year" | "pages",
-  query: "" as string,
-};
-export type FiltersState = typeof filtersState;
-export type FiltersAction = {
-  type: keyof FiltersState | "reset";
-  payload: FiltersState[keyof FiltersState];
-};
-
 export function BooksList() {
-  const [state, dispatch] = useReducer(reducer, filtersState);
+  const { filtersState, isBookInFavs } = useContext(FiltersContext);
 
-  function reducer(state: FiltersState, action: FiltersAction) {
-    switch (action.type) {
-      case "genre":
-        return {
-          ...state,
-          genre: action.payload === "Todos" ? null : action.payload,
-        };
+  const filteredData = useMemo(() => {
+    return BOOKS_JSON.library.filter((book) => {
+      const data = book.book;
 
-      case "author":
-        return {
-          ...state,
-          author: action.payload === "Todos" ? null : action.payload,
-        };
-
-      case "sort":
-        return { ...state, sort: action.payload as (typeof filtersState)["sort"] };
-
-      case "order":
-        return { ...state, order: action.payload as (typeof filtersState)["order"] };
-
-      case "query":
-        return { ...state, query: action.payload as (typeof filtersState)["query"] };
-
-      case "reset":
-        return filtersState;
-
-      default:
-        return state;
-    }
-  }
-
-  const filteredData = BOOKS_JSON.library.filter((book) => {
-    const data = book.book;
-
-    return (
-      (state.query ? data.title.toLowerCase().includes(state.query.toLowerCase()) : true) &&
-      (state.genre ? data.genre === state.genre : true) &&
-      (state.author ? data.author.name === state.author : true)
-    );
-  });
+      return (
+        (filtersState.show === "Todos"
+          ? true
+          : filtersState.show === "En mi lista"
+          ? isBookInFavs({ book: data.ISBN, fav: true })
+          : isBookInFavs({ book: data.ISBN, fav: false })) &&
+        (filtersState.query
+          ? data.title.toLowerCase().includes(filtersState.query.toLowerCase())
+          : true) &&
+        (filtersState.genre ? data.genre === filtersState.genre : true) &&
+        (filtersState.author ? data.author.name === filtersState.author : true)
+      );
+    });
+  }, [
+    filtersState.author,
+    filtersState.genre,
+    filtersState.query,
+    filtersState.show,
+    isBookInFavs,
+  ]);
 
   const sortedData = useMemo(() => {
     const data = [...filteredData];
 
-    switch (state.sort) {
+    switch (filtersState.sort) {
       case "title":
         data.sort((a, b) => a.book.title.localeCompare(b.book.title));
         break;
@@ -90,20 +65,20 @@ export function BooksList() {
         break;
     }
 
-    if (state.order === "desc") data.reverse();
+    if (filtersState.order === "desc") data.reverse();
 
     return data;
-  }, [filteredData, state.order, state.sort]);
+  }, [filteredData, filtersState]);
 
   return sortedData ? (
-    <section className="flex flex-col items-center justify-center gap-2">
-      <Filterbar length={sortedData.length} dispatch={dispatch} />
+    <section className="flex flex-col items-center justify-center gap-4">
+      <Filterbar data={sortedData} />
 
-      <ol className="flex flex-wrap items-start gap-8">
+      <BooksListContainer>
         {sortedData.map((book, index) => {
           return <BookItem key={index} book={book.book} />;
         })}
-      </ol>
+      </BooksListContainer>
     </section>
   ) : null;
 }
