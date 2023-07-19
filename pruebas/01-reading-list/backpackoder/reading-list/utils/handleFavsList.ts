@@ -1,3 +1,5 @@
+"use client";
+
 export function handleFavList(ids: string[]) {
   const storage = window.localStorage;
   const storage_favs = storage.getItem("favs");
