@@ -1,8 +1,10 @@
 "use client";
 
 export function handleFavList(ids: string[]) {
-  const storage = typeof window === undefined ? null : window.localStorage;
-  const storage_favs = storage && storage.getItem("favs");
+  if (typeof window === "undefined") return;
+
+  const storage = window.localStorage;
+  const storage_favs = storage.getItem("favs");
   let newFavs: string[] = storage_favs ? JSON.parse(storage_favs) : [];
 
   for (let i = 0; i < ids.length; i++) {
@@ -15,5 +17,5 @@ export function handleFavList(ids: string[]) {
   }
 
   newFavs.push(...ids);
-  storage && storage.setItem("favs", JSON.stringify(newFavs));
+  storage.setItem("favs", JSON.stringify(newFavs));
 }
