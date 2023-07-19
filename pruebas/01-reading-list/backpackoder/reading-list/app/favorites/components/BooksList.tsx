@@ -24,6 +24,8 @@ export function BooksList() {
     });
   }, [getIsBookInFavs]);
 
+  if (typeof window === "undefined") return null;
+
   return FavsList.length > 0 ? (
     <BooksListContainer>
       {FavsList.map((book) => {
