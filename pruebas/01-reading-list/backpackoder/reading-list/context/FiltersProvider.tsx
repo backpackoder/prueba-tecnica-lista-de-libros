@@ -59,6 +59,8 @@ export function FiltersProvider({ children }: ProviderProps) {
     setFavList(typeof window === undefined ? null : window.localStorage.getItem("favs"));
   }, [filtersState, setFavList]);
 
+  if (typeof window === "undefined") return;
+
   return (
     <FiltersContext.Provider
       value={{
