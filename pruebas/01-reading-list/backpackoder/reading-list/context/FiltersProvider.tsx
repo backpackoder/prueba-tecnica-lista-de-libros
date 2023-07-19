@@ -7,12 +7,9 @@ import { FiltersContext } from "./FiltersContext";
 
 // Reducer
 import { reducer } from "./reducer";
-import { handleFavList } from "@/utils/handleFavsList";
 
-export interface State {
-  isMenuOpen: boolean;
-  isDashboardMenuOpen: boolean;
-}
+// Utils
+import { handleFavList } from "@/utils/handleFavsList";
 
 export const initialFiltersState = {
   show: "Todos" as "Todos" | "En mi lista" | "No en mi lista",
@@ -30,13 +27,15 @@ export type FiltersAction = {
   payload: FiltersState[keyof FiltersState];
 };
 
-interface ProviderProps {
+type ProviderProps = {
   children: JSX.Element | JSX.Element[];
-}
+};
 
 export function FiltersProvider({ children }: ProviderProps) {
   const [filtersState, filtersDispatch] = useReducer(reducer, initialFiltersState);
-  const [favList, setFavList] = useState(window.localStorage.getItem("favs"));
+  const [favList, setFavList] = useState(
+    typeof window === undefined ? null : window.localStorage.getItem("favs")
+  );
 
   const getIsBookInFavs = useCallback(
     ({ book, fav }: { book: string; fav: boolean }) => {
@@ -57,10 +56,10 @@ export function FiltersProvider({ children }: ProviderProps) {
   );
 
   useEffect(() => {
-    setFavList(window.localStorage.getItem("favs"));
+    setFavList(typeof window === undefined ? null : window.localStorage.getItem("favs"));
   }, [filtersState, setFavList]);
 
-  return window ? (
+  return (
     <FiltersContext.Provider
       value={{
         filtersState,
@@ -73,5 +72,5 @@ export function FiltersProvider({ children }: ProviderProps) {
     >
       {children}
     </FiltersContext.Provider>
-  ) : null;
+  );
 }
