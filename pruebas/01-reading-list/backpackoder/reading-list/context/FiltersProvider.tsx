@@ -33,9 +33,7 @@ type ProviderProps = {
 
 export function FiltersProvider({ children }: ProviderProps) {
   const [filtersState, filtersDispatch] = useReducer(reducer, initialFiltersState);
-  const [favList, setFavList] = useState(
-    typeof window === "undefined" ? null : window.localStorage.getItem("favs")
-  );
+  const [favList, setFavList] = useState(window.localStorage.getItem("favs"));
 
   const getIsBookInFavs = useCallback(
     ({ book, fav }: { book: string; fav: boolean }) => {
@@ -47,7 +45,7 @@ export function FiltersProvider({ children }: ProviderProps) {
   const handleFav = useCallback(
     (book: string) => {
       getIsBookInFavs({ book, fav: true });
-      typeof window !== "undefined" && handleFavList([book]);
+      handleFavList([book]);
       filtersDispatch({ type: "changes", payload: book });
 
       return favList?.includes(book) ?? false;
@@ -56,8 +54,10 @@ export function FiltersProvider({ children }: ProviderProps) {
   );
 
   useEffect(() => {
-    setFavList(typeof window === "undefined" ? null : window.localStorage.getItem("favs"));
+    setFavList(window.localStorage.getItem("favs"));
   }, [filtersState, setFavList]);
+
+  if (typeof window === "undefined") return null;
 
   return (
     <FiltersContext.Provider
