@@ -60,7 +60,7 @@ export function FiltersProvider({ children }: ProviderProps) {
     setFavList(window.localStorage.getItem("favs"));
   }, [filtersState, setFavList]);
 
-  return (
+  return window ? (
     <FiltersContext.Provider
       value={{
         filtersState,
@@ -73,5 +73,5 @@ export function FiltersProvider({ children }: ProviderProps) {
     >
       {children}
     </FiltersContext.Provider>
-  );
+  ) : null;
 }
