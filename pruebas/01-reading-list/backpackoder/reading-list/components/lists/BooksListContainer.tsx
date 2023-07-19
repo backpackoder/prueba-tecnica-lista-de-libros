@@ -3,5 +3,7 @@ type BooksListContainerProps = {
 };
 
 export function BooksListContainer({ children }: BooksListContainerProps) {
-  return <ol className="flex flex-wrap items-start gap-8">{children}</ol>;
+  return (
+    <ol className="flex flex-wrap items-start gap-8 bg-gray-300 p-8 rounded-lg">{children}</ol>
+  );
 }

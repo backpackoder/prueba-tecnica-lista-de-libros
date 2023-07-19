@@ -70,8 +70,6 @@ export function BooksList() {
     return data;
   }, [filteredData, filtersState]);
 
-  if (typeof window === "undefined") return null;
-
   return sortedData ? (
     <section className="flex flex-col items-center justify-center gap-4">
       <Filterbar data={sortedData} />
