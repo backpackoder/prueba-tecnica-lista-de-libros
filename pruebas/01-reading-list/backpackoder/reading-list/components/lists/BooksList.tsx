@@ -14,7 +14,7 @@ import { BookItem } from "../BookItem";
 import BOOKS_JSON from "../../assets/json/books.json";
 
 export function BooksList() {
-  const { filtersState, isBookInFavs } = useContext(FiltersContext);
+  const { filtersState, getIsBookInFavs } = useContext(FiltersContext);
 
   const filteredData = useMemo(() => {
     return BOOKS_JSON.library.filter((book) => {
@@ -24,8 +24,8 @@ export function BooksList() {
         (filtersState.show === "Todos"
           ? true
           : filtersState.show === "En mi lista"
-          ? isBookInFavs({ book: data.ISBN, fav: true })
-          : isBookInFavs({ book: data.ISBN, fav: false })) &&
+          ? getIsBookInFavs({ book: data.ISBN, fav: true })
+          : getIsBookInFavs({ book: data.ISBN, fav: false })) &&
         (filtersState.query
           ? data.title.toLowerCase().includes(filtersState.query.toLowerCase())
           : true) &&
@@ -38,7 +38,7 @@ export function BooksList() {
     filtersState.genre,
     filtersState.query,
     filtersState.show,
-    isBookInFavs,
+    getIsBookInFavs,
   ]);
 
   const sortedData = useMemo(() => {
