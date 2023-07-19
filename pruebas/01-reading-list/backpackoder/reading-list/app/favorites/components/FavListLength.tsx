@@ -14,5 +14,5 @@ export function FavListLength() {
     setParsedFavs(JSON.parse(favList ?? "[]"));
   }, [favList]);
 
-  return <>{parsedFavs?.length}</>;
+  return parsedFavs ? <>{parsedFavs?.length}</> : null;
 }

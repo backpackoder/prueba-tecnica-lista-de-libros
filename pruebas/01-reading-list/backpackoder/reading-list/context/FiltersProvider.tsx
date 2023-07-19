@@ -5,9 +5,6 @@ import { useCallback, useEffect, useReducer, useState } from "react";
 // Contexts
 import { FiltersContext } from "./FiltersContext";
 
-// Utils
-import { storage_favs } from "@/utils/localStorageData";
-
 // Reducer
 import { reducer } from "./reducer";
 import { handleFavList } from "@/utils/handleFavsList";
@@ -39,7 +36,7 @@ interface ProviderProps {
 
 export function FiltersProvider({ children }: ProviderProps) {
   const [filtersState, filtersDispatch] = useReducer(reducer, initialFiltersState);
-  const [favList, setFavList] = useState(storage_favs);
+  const [favList, setFavList] = useState(window.localStorage.getItem("favs"));
 
   const getIsBookInFavs = useCallback(
     ({ book, fav }: { book: string; fav: boolean }) => {

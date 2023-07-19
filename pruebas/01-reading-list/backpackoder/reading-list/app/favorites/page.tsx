@@ -9,6 +9,7 @@ export default async function Favorites() {
         Mis libros favoritos (<FavListLength />
         ):
       </h2>
+
       <BooksList />
     </article>
   );
